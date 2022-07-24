@@ -4,5 +4,6 @@ RUN apt update
 RUN apt upgrade -y
 RUN apt install -y mariadb-server
 
-
-CMD ["mysqld"]
+CMD service mysql start && sleep infinity 
+# TODO : previous line is shit, fix it later
+#CMD ["mysqld"]
