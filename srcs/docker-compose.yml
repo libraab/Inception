@@ -6,22 +6,43 @@ services:
       - "80:80"
     networks:
       - inception_network
+    volumes:
+      - wordpress:/var/www/html
 
   wordpress:
     build: ./requirements/wordpress
     image: php_img
     networks:
       - inception_network
+    volumes:
+      - wordpress:/var/www/html
 
   mariadb:
     build: ./requirements/mariadb
     image: md_img
     networks:
       - inception_network
+    volumes:
+      - mariadb:/var/lib/mysql/wp_db
 
 networks:
   inception_network:
     name: inception_network
     driver: bridge
+
+volumes:
+  wordpress:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/abouhlel/Desktop/b
+  mariadb:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/abouhlel/Desktop/a
+
 
 #docker-compose up --build
