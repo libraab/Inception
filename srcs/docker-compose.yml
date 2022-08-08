@@ -1,7 +1,8 @@
 services:
   nginx:
+    container_name: nginx
     build: ./requirements/nginx
-    image: nginx_img
+    image: nginx
     ports:
       - "80:80"
     networks:
@@ -10,16 +11,18 @@ services:
       - wordpress:/var/www/html
 
   wordpress:
+    container_name: wordpress
     build: ./requirements/wordpress
-    image: php_img
+    image: wordpress
     networks:
       - inception_network
     volumes:
       - wordpress:/var/www/html
 
   mariadb:
+    container_name: mariadb
     build: ./requirements/mariadb
-    image: md_img
+    image: mariadb
     networks:
       - inception_network
     volumes:
@@ -32,17 +35,19 @@ networks:
 
 volumes:
   wordpress:
+    name : wordpress
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: /Users/abouhlel/Desktop/b
+      device: /Users/abouhlel/Desktop/wordpress
   mariadb:
+    name : mariadb
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: /Users/abouhlel/Desktop/a
+      device: /Users/abouhlel/Desktop/mariadb
 
 
-#docker-compose up --build
+# docker-compose up --build
