@@ -14,6 +14,7 @@ RUN mkdir /run/php
 RUN touch /run/php/php7.3-fpm.sock
 
 COPY ./conf/www.conf ./etc/php/7.3/fpm/pool.d
+
 CMD ["php-fpm7.3",  "-F"]
 
 # docker build -t php_img . 
