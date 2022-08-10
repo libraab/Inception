@@ -20,12 +20,8 @@ RUN		openssl \
 			-keyout /etc/nginx/ssl/private/wordpress.key \
 			-out /etc/nginx/ssl/public/wordpress.crt \
 			-subj \
-			"/C=FR/ST=PACA/L=Nice/O=42 Nice/CN=abouhlel.42.fr"
+			"/C=FR/ST=PACA/L=Nice/O=42 Nice/CN=localhost"
 
-RUN		rm -f /etc/nginx/conf.d/default.conf
-RUN		rm -f /etc/nginx/sites-enabled/default
-
-COPY	conf/nginx.conf         /etc/nginx/nginx.conf
 COPY	conf/wordpress.conf     /etc/nginx/conf.d/wordpress.conf
 
 CMD ["nginx", "-g", "daemon off;"]
