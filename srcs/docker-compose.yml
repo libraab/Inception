@@ -9,6 +9,9 @@ services:
       - inception_network
     volumes:
       - wordpress:/var/www/html
+    # env_file:
+    #   - ./env
+    restart: always
 
   wordpress:
     container_name: wordpress
@@ -18,6 +21,9 @@ services:
       - inception_network
     volumes:
       - wordpress:/var/www/html
+    # env_file:
+    #   - ./env
+    restart: always
 
   mariadb:
     container_name: mariadb
@@ -27,6 +33,9 @@ services:
       - inception_network
     volumes:
       - mariadb:/var/lib/mysql/wp_db
+    # env_file:
+    #   - ./env
+    restart: always
 
 networks:
   inception_network:
