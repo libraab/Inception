@@ -15,13 +15,17 @@ RUN touch /run/php/php7.3-fpm.sock
 
 COPY ./conf/www.conf ./etc/php/7.3/fpm/pool.d
 
-WORKDIR /var/www/
+RUN apt-get install -y wget
+RUN wget -P /var/www/ https://fr.wordpress.org/latest-fr_FR.tar.gz
+RUN tar -xf /var/www/latest-fr_FR.tar.gz -C /var/www/
+RUN rm -rf /var/www/latest-fr_FR.tar.gz
 
-# RUN apt-get install -y wget
+COPY ./conf/wp-config.php /wp-config.php
+COPY ./testos.sh /testos.sh
 
-# RUN apt-get install -y wget && wget https://fr.wordpress.org/latest-fr_FR.tar.gz ./ && tar -xf latest-fr_FR.tar.gz -C ./html
+RUN chmod 777 /testos.sh
 
-# RUN tar -xf latest-fr_FR.tar.gz -C ./html
+# RUN mv /var/www/html/wordpress/* /var/www/html/ && rm -rf /var/www/html/wordpress
 
 # WORKDIR /var/www/wordpress/
 # # for downloading something like a .zip thats used to install wordpress and config it, it's a WP-CLI
@@ -31,13 +35,13 @@ WORKDIR /var/www/
 # # RUN chown -R www-data:www-data .
 # # now we're inatalling wordpress with WP-cli
 # RUN wp core download --allow-root
-COPY ./conf/wp-config.php ./var/www/html
+# COPY ./conf/wp-config.php ./var/www/html
 # RUN wp core install --url=https://localhost  skip--title --admin_user='abouhlel' --admin_password='asma' --skip-email --allow-root
 # RUN wp config create --dbname='wp_db' --dbuser='abouhlel' --dbpass='asma' --dbhost='mariadb'
 
 EXPOSE 9000
 
-CMD ["php-fpm7.3",  "-F"]
+CMD bash /testos.sh
 
 # docker build -t php_img . 
 # docker run -d php_img
