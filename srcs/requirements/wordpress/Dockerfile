@@ -31,7 +31,7 @@ WORKDIR /var/www/
 # # RUN chown -R www-data:www-data .
 # # now we're inatalling wordpress with WP-cli
 # RUN wp core download --allow-root
-# # COPY ./conf/wp-config.php ./var/www/html
+COPY ./conf/wp-config.php ./var/www/html
 # RUN wp core install --url=https://localhost  skip--title --admin_user='abouhlel' --admin_password='asma' --skip-email --allow-root
 # RUN wp config create --dbname='wp_db' --dbuser='abouhlel' --dbpass='asma' --dbhost='mariadb'
 
