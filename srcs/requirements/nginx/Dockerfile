@@ -9,8 +9,7 @@ FROM debian:buster
 
 RUN apt update
 RUN apt upgrade -y
-RUN apt install -y nginx
-RUN apt install -y openssl
+RUN apt install -y nginx openssl
 
 RUN		mkdir -p /etc/nginx/ssl/public/
 RUN		mkdir -p /etc/nginx/ssl/private/

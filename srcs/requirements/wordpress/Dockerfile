@@ -9,21 +9,19 @@ FROM debian:buster
 
 RUN apt update
 RUN apt upgrade -y
-RUN apt install -y php php-fpm php-cli curl apt-utils php-mysql
+RUN apt install -y php php-fpm php-cli curl apt-utils php-mysql wget
 RUN mkdir /run/php
 RUN touch /run/php/php7.3-fpm.sock
 
 COPY ./conf/www.conf ./etc/php/7.3/fpm/pool.d
 
-RUN apt-get install -y wget
+ 
 RUN wget -P /var/www/ https://fr.wordpress.org/latest-fr_FR.tar.gz
 RUN tar -xf /var/www/latest-fr_FR.tar.gz -C /var/www/
 RUN rm -rf /var/www/latest-fr_FR.tar.gz
 
-COPY ./conf/wp-config.php /wp-config.php
-COPY ./testos.sh /testos.sh
+COPY ./conf/wp-config.php /var/www/wordpress/wp-config.php
 
-RUN chmod 777 /testos.sh
 
 # RUN mv /var/www/html/wordpress/* /var/www/html/ && rm -rf /var/www/html/wordpress
 
@@ -39,9 +37,12 @@ RUN chmod 777 /testos.sh
 # RUN wp core install --url=https://localhost  skip--title --admin_user='abouhlel' --admin_password='asma' --skip-email --allow-root
 # RUN wp config create --dbname='wp_db' --dbuser='abouhlel' --dbpass='asma' --dbhost='mariadb'
 
+RUN chown -Rv www-data:www-data /var/www/wordpress
+
 EXPOSE 9000
 
-CMD bash /testos.sh
+CMD    php-fpm7.3 -F
+
 
 # docker build -t php_img . 
 # docker run -d php_img

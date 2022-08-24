@@ -20,11 +20,13 @@ services:
     networks:
       - inception_network
     volumes:
-      - wordpress:/var/www/html
+      - wordpress:/var/www/wordpress
     # env_file:
     #   - ./env
     depends_on:
       - mariadb
+    expose:
+      - "9000"
     restart: always
 
   mariadb:
@@ -34,9 +36,11 @@ services:
     networks:
       - inception_network
     volumes:
-      - mariadb:/var/lib/mysql/wp_db
+      - mariadb:/var/lib/mysql/
     # env_file:
     #   - ./env
+    expose:
+      - "3306"
     restart: always
 
 networks:
@@ -61,4 +65,10 @@ volumes:
       device: /Users/${USER}/Desktop/mariadb
 
 
-# docker-compose up --build
+# docker-compose up -d --build        <===== launch
+# docker compose down                 <===== delete dockers
+# docker rmi volume_name              <===== delete volume
+# docker volume rm volume_name        <===== delete volume
+# docker volume ls                    <===== listing volumes
+# docker network ls                   <===== listing networks
+# docker ps -a                        <===== listing the dockers
