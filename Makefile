@@ -1,46 +1,40 @@
-NAME				= inception
+all: build
 
-# ███████╗    ██╗    ██╗         ███████╗    ███████╗
-# ██╔════╝    ██║    ██║         ██╔════╝    ██╔════╝
-# █████╗      ██║    ██║         █████╗      ███████╗
-# ██╔══╝      ██║    ██║         ██╔══╝      ╚════██║
-# ██║         ██║    ███████╗    ███████╗    ███████║
-# ╚═╝         ╚═╝    ╚══════╝    ╚══════╝    ╚══════╝
- 
+build:
+	@docker-compose -f srcs/docker-compose.yml -p inception up -d --build
+	@echo "docker services are up"${__EOC}
 
-# ██████╗     ██╗   ██╗    ██╗         ███████╗    ███████╗
-# ██╔══██╗    ██║   ██║    ██║         ██╔════╝    ██╔════╝
-# ██████╔╝    ██║   ██║    ██║         █████╗      ███████╗
-# ██╔══██╗    ██║   ██║    ██║         ██╔══╝      ╚════██║
-# ██║  ██║    ╚██████╔╝    ███████╗    ███████╗    ███████║
-# ╚═╝  ╚═╝     ╚═════╝     ╚══════╝    ╚══════╝    ╚══════╝
+start:
+	@docker-compose -f srcs/docker-compose.yml -p inception start > /dev/null
+	@echo "docker services have been started"${__EOC}
 
+stop:
+	@docker-compose -f srcs/docker-compose.yml -p inception stop > /dev/null
+	@echo "docker services have been stopped"${__EOC}
 
-#  ██████╗     ██████╗     ██╗          ██████╗     ██████╗
-# ██╔════╝    ██╔═══██╗    ██║         ██╔═══██╗    ██╔══██╗
-# ██║         ██║   ██║    ██║         ██║   ██║    ██████╔╝
-# ██║         ██║   ██║    ██║         ██║   ██║    ██╔══██╗
-# ╚██████╗    ╚██████╔╝    ███████╗    ╚██████╔╝    ██║  ██║
-#  ╚═════╝     ╚═════╝     ╚══════╝     ╚═════╝     ╚═╝  ╚═╝
+status:
+	@docker-compose -f srcs/docker-compose.yml -p inception ps
 
+clean:
+	@rm -rf /home/abouhlel/data/www/* > /dev/null
+	@rm -rf /home/abouhlel/data/database/* > /dev/null
+	@echo "cleaned docker data"${__EOC}
 
-black 				=	"^[[1;30m"
-red 				=	"^[[1;31m"
-green 				=	"^[[1;32m"
-yellow 				=	"^[[1;33m"
-blue 				=	"^[[1;34m"
-magenta 			=	"^[[1;35m"
-cyan 				=	"^[[1;36m"
-white 				=	"^[[1;37m"
+fclean: clean
+	@docker rmi -f nginx > /dev/null
+	@docker rmi -f mariadb > /dev/null
+	@docker rmi -f wordpress > /dev/null
+	@echo "cleaned docker images"${__EOC}
+	@docker rm -f nginx > /dev/null
+	@docker rm -f mariadb > /dev/null
+	@docker rm -f wordpress > /dev/null
+	@echo "cleaned docker containers"${__EOC}
+	@docker volume rm -f inception_database > /dev/null
+	@docker volume rm -f inception_www > /dev/null
+	@echo "cleaned docker volumes"${__EOC}
+	@docker network rm inception > /dev/null
+	@echo "cleaned docker networks"${__EOC}
 
-bg_black 			=	"^[[40m"
-bg_red 				=	"^[[41m"
-bg_green 			=	"^[[42m"
-bg_yellow 			=	"^[[43m"
-bg_blue 			=	"^[[44m"
-bg_magenta 			=	"^[[45m"
-bg_cyan 			=	"^[[46m"
-bg_cyan 			=	"^[[46m"
-bg_white 			=	"^[[47m"
+re: stop fclean all
 
-reset 				=	"^[[0m"
+.PHONY: all start stop status fclean clean re

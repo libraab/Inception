@@ -5,44 +5,50 @@
 # ██║         ██║  ██║    ██║
 # ╚═╝         ╚═╝  ╚═╝    ╚═╝
 
-FROM debian:buster
+FROM alpine:3.15
 
-RUN apt update
-RUN apt upgrade -y
-RUN apt install -y php php-fpm php-cli curl apt-utils php-mysql wget
-RUN mkdir /run/php
-RUN touch /run/php/php7.3-fpm.sock
+RUN apk update && \
+	apk upgrade && \
+	apk add php7 \
+	php7-fpm \
+	php7-opcache \
+	php7-mysqli \
+	php7-session \
+	php7-iconv \
+	php7-json \
+	php7-gd \
+	php7-curl \
+	php7-xml \
+	php7-common \
+	php7-imap \
+	php7-cgi \
+	php7-pdo \
+	php7-pdo_mysql \
+	php7-soap \
+	php7-xmlrpc \
+	php7-posix \
+	php7-mcrypt \
+	php7-redis \
+	php7-gettext \
+	php7-ldap \
+	php7-ctype \
+	php7-dom \
+	php7-phar \
+	php7-gd \
+	php7-zlib \
+	curl \
+	openrc
 
-COPY ./conf/www.conf ./etc/php/7.3/fpm/pool.d
+RUN		rm -f /etc/php7/php-fpm.d/www.conf
+COPY	conf/default.conf /etc/php7/php-fpm.d/www.conf
 
- 
-RUN wget -P /var/www/ https://fr.wordpress.org/latest-fr_FR.tar.gz
-RUN tar -xf /var/www/latest-fr_FR.tar.gz -C /var/www/
-RUN rm -rf /var/www/latest-fr_FR.tar.gz
+RUN		mkdir -p /var/www/html
+RUN		adduser -u 82 -D -S -G www-data www-data
+RUN		chmod 777 -R /var/www/html
+RUN		chown -R www-data:www-data /var/www/html
 
-COPY ./conf/wp-config.php /var/www/wordpress/wp-config.php
+COPY 	./conf/wp-config.php ./
+COPY 	./conf/entrypoint.sh ./
+RUN		chmod +x ./entrypoint.sh
 
-
-# RUN mv /var/www/html/wordpress/* /var/www/html/ && rm -rf /var/www/html/wordpress
-
-# WORKDIR /var/www/wordpress/
-# # for downloading something like a .zip thats used to install wordpress and config it, it's a WP-CLI
-# RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-# RUN chmod +x wp-cli.phar
-# RUN mv wp-cli.phar /usr/local/bin/wp
-# # RUN chown -R www-data:www-data .
-# # now we're inatalling wordpress with WP-cli
-# RUN wp core download --allow-root
-# COPY ./conf/wp-config.php ./var/www/html
-# RUN wp core install --url=https://localhost  skip--title --admin_user='abouhlel' --admin_password='asma' --skip-email --allow-root
-# RUN wp config create --dbname='wp_db' --dbuser='abouhlel' --dbpass='asma' --dbhost='mariadb'
-
-RUN chown -Rv www-data:www-data /var/www/wordpress
-
-EXPOSE 9000
-
-CMD    php-fpm7.3 -F
-
-
-# docker build -t php_img . 
-# docker run -d php_img
+ENTRYPOINT ["./entrypoint.sh"]

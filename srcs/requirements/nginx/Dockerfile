@@ -5,25 +5,31 @@
 # ██║ ╚████║    ╚██████╔╝    ██║    ██║ ╚████║    ██╔╝ ██╗
 # ╚═╝  ╚═══╝     ╚═════╝     ╚═╝    ╚═╝  ╚═══╝    ╚═╝  ╚═╝
 
-FROM debian:buster
+FROM alpine:3.15
 
-RUN apt update
-RUN apt upgrade -y
-RUN apt install -y nginx openssl
+RUN	apk update && \
+	apk upgrade && \
+	apk add nginx \
+	openssl \
+	openrc
 
-RUN		mkdir -p /etc/nginx/ssl/public/
-RUN		mkdir -p /etc/nginx/ssl/private/
+RUN	mkdir -p /var/www/html/
+COPY conf/default.conf /etc/nginx/http.d/default.conf
 
-RUN		openssl \
-			req -x509 -nodes -days 365 -newkey rsa:2048 \
-			-keyout /etc/nginx/ssl/private/wordpress.key \
-			-out /etc/nginx/ssl/public/wordpress.crt \
-			-subj \
-			"/C=FR/ST=PACA/L=Nice/O=42 Nice/CN=localhost"
+RUN	mkdir -p /etc/nginx/ssl
 
-COPY	conf/wordpress.conf     /etc/nginx/conf.d/wordpress.conf
+RUN	openssl req \
+	-newkey rsa:4096 \
+	-x509 \
+	-sha256 \
+	-days 365 \
+	-nodes \
+	-subj "/C=FR/ST=PACA/L=Nice/O=42/OU=abouhlel/CN=localhost" \
+	-keyout /etc/nginx/ssl/inception.key \
+	-out /etc/nginx/ssl/inception.cert
 
-CMD ["nginx", "-g", "daemon off;"]
+RUN	rc-update add nginx default
 
-# docker build -t nginx_img . 
-# docker run -d nginx_img
+EXPOSE 443
+
+CMD	["nginx", "-g", "daemon off;"]
